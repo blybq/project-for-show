@@ -27,9 +27,20 @@ int main(void) {
     lastKey = key;
     key = read_keyboard();
 
-    if (key == lastKey && key != 14 && key != 15) {
-      smart_display_digit(key);
-      continue;
+    if (key == lastKey) {
+        if (key < 10) {
+          smart_display_digit(key);
+        }
+        if (key >= 10 && key <= 13) {
+            clear_digits();
+        }
+        if (key == 14) {
+          smart_display_digit(result);
+        }
+        if (key == 15) {
+          smart_display_digit(0);
+        }
+        continue;
     }
 
     // number key: 0~9 
