@@ -6,14 +6,16 @@ int main(void) {
   int pattern;
   int delay_count;
   int i;
+  int mask;
+  int j;
   
   while (1) {
     // Light from both sides to the middle one by one
-    pattern = 0x80000001; // The leftmost and rightmost LEDs each have one LED
+    pattern = 0x00800001; // The leftmost and rightmost LEDs each have one LED
     i = 0;
     while (i < 12) {
       light_leds(pattern);
-      delay_count = 250000; // Approximately 0.5 second delay
+      delay_count = 100000; // Approximately 0.5 second delay
       while (delay_count > 0) {
         delay_count = delay_count - 1;
       }
@@ -22,17 +24,31 @@ int main(void) {
       i = i + 1;
     }
     
-    // Extinguish from the middle to both sides one by one
-    pattern = 0x00FFF000; // The middle 12 LEDs
+    // Extinguish from the middle two LEDs to both sides one by one
+    // Start with all 24 LEDs on, then turn off from middle to both sides
+    pattern = 0x00FFFFFF; // All 24 LEDs are on (high 8 bits are 0)
     i = 0;
+
     while (i < 12) {
       light_leds(pattern);
-      delay_count = 250000; // Approximately 0.5 second delay
+      delay_count = 100000; // Approximately 0.5 second delay
       while (delay_count > 0) {
         delay_count = delay_count - 1;
       }
-      // Contract to both sides
-      pattern = (pattern / 2) & 0x7FFF8000;
+      // Create mask for middle LEDs to turn off: start with middle two, expand outward
+      // Use multiplication and division instead of shift operations
+
+      mask = 0x00001800; // Start with middle two LEDs
+      j = 0;
+
+      while (j < i) {
+        mask = mask | (mask * 2) | (mask / 2);
+        mask = mask & 0x00FFFFFF; // Ensure high 8 bits are 0
+        j = j + 1;
+      }
+
+      // Turn off the LEDs in the mask
+      pattern = pattern & (~mask);
       i = i + 1;
     }
   }

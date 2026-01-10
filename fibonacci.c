@@ -21,10 +21,10 @@ int main(void) {
   
   // Display the Fibonacci numbers on the 7-segment display
   i = 0;
-  while (i < 10) {
-    smart_display_digit(fib[i]);
-    delay_count = 500000; // Approximately 1 second delay
+  while (i < 10) {    
+    delay_count = 10000; // Approximately 1 second delay
     while (delay_count > 0) {
+      smart_display_digit(fib[i]);
       delay_count = delay_count - 1;
     }
     i = i + 1;

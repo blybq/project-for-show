@@ -12,13 +12,12 @@ int main(void) {
   while (1) {
     // Display the binary value (low 24 bits) on the LED
     light_leds(counter);
-    
-    // Display the decimal value on the 7-segment display
-    smart_display_digit(counter);
-    
-    // Delay approximately 0.5 seconds
-    delay_count = 250000;
+            
+    // Delay approximately 1 seconds
+    delay_count = 10000;
     while (delay_count > 0) {
+      // Display the decimal value on the 7-segment display
+      smart_display_digit(counter);
       delay_count = delay_count - 1;
     }
     
