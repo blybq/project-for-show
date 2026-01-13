@@ -30,11 +30,6 @@ int main(void) {
     i = 0;
 
     while (i < 12) {
-      light_leds(pattern);
-      delay_count = 100000; // Approximately 0.5 second delay
-      while (delay_count > 0) {
-        delay_count = delay_count - 1;
-      }
       // Create mask for middle LEDs to turn off: start with middle two, expand outward
       // Use multiplication and division instead of shift operations
 
@@ -49,6 +44,11 @@ int main(void) {
 
       // Turn off the LEDs in the mask
       pattern = pattern & (~mask);
+      light_leds(pattern);
+      delay_count = 100000; // Approximately 0.5 second delay
+      while (delay_count > 0) {
+        delay_count = delay_count - 1;
+      }
       i = i + 1;
     }
   }

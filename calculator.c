@@ -4,21 +4,16 @@
 
 // Use A/B/C/D to represent addition/subtraction/multiplication/division
 int main(void) {
-  int num1;
-  int num2;
+  int tempNumber;
+  int lastNumber;
   int result;
   int op;
   int key;
   int lastKey;
   int display_num;
-  int state;
-  
-  // 0: Wait for the first number, 1: Wait for the operator
-  // 2: Wait for the second number, 3: Display the result
-  state = 0;
-  
-  num1 = 0;
-  num2 = 0;
+
+  tempNumber = 0;
+  lastNumber = 0;
   op = 0;
   result = 0;
   key = 0;
@@ -30,91 +25,66 @@ int main(void) {
     key = read_keyboard();
 
     if (key == lastKey) {
-        if (key < 10) {
+        if (key < 10 || key == 14) {
           smart_display_digit(display_num);
-        }
-        if (key >= 10 && key <= 13) {
-            clear_digits();
-        }
-        if (key == 14) {
-          smart_display_digit(result);
-        }
-        if (key == 15) {
+        } else if (key == 15) {
           smart_display_digit(0);
+        } else {
+            clear_digits();
         }
         continue;
     }
 
     // number key: 0~9 
-    if (key >= 0 && key <= 9 && state == 0) {
-        num1 = num1 * 10 + key;
-        display_num = num1;
+    if (key >= 0 && key <= 9) {
+        tempNumber = tempNumber * 10 + key;
+        display_num = tempNumber;
         smart_display_digit(display_num);
     }
+    
+    if (key >= 10 && key <= 13) {
+        lastNumber = tempNumber;
+        tempNumber = 0;
 
-    if (key >= 0 && key <= 9 && state == 1) {
-        num2 = num2 * 10 + key;
-        display_num = num2;
-        smart_display_digit(display_num);
-    }
+        if (key == 10) { // A key: Addition
+            op = 1;
+        } else if (key == 11) { // B key: Subtraction
+            op = 2;
+        } else if (key == 12) { // C key: Multiplication
+            op = 3;
+        } else { // D key: Division
+            op = 4;
+        }
 
-    // A key: Addition 
-    if (key == 10 && state == 0) {
-        op = 1;
-        state = 1;
-    }
-
-    // B key: Subtraction 
-    if (key == 11 && state == 0) {
-        op = 2;
-        state = 1;
-    }
-
-    // C key: Multiplication 
-    if (key == 12 && state == 0) {
-        op = 3;
-        state = 1;
-    }
-
-    // D key: Division 
-    if (key == 13 && state == 0) {
-        op = 4;
-        state = 1;
     }
 
     // E key: Equal 
-    if (key == 14 && state == 1 && op == 1) {
-        result = num1 + num2;
-    }
+    if (key == 14) {
+        if (op == 1) {
+            result = lastNumber + tempNumber;
+        } else if (op == 2) {
+            result = lastNumber - tempNumber;
+        } else if (op == 3) {
+            result = lastNumber * tempNumber;
+        } else {
+            if (tempNumber != 0) {
+                result = lastNumber / tempNumber;
+            } else {
+                result = 0;   // division by zero
+            }
+        }
 
-    if (key == 14 && state == 1 && op == 2) {
-        result = num1 - num2;
-    }
-
-    if (key == 14 && state == 1 && op == 3) {
-        result = num1 * num2;
-    }
-
-    if (key == 14 && state == 1 && op == 4 && num2 != 0) {
-        result = num1 / num2;
-    }
-
-    if (key == 14 && state == 1 && op == 4 && num2 == 0) {
-        result = 0;   // division by zero
-    }
-
-    if (key == 14 && state == 1) {
-        smart_display_digit(result);
-        state = 0;
+        tempNumber = result;
+        display_num = result;
+        smart_display_digit(display_num);
     }
 
     // F key: Clear 
     if (key == 15) {
-        num1 = 0;
-        num2 = 0;
+        tempNumber = 0;
+        lastNumber = 0;
         op = 0;
         result = 0;
-        state = 0;
         smart_display_digit(0);
     }
   }
